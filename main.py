@@ -1,28 +1,23 @@
 import pandas as pd
 import plotly.graph_objects as go
-import plotly.offline as pyo
 import dash
-from dash import dcc
-from dash import html
+from dash import dcc, html
+from functions import plotgraph
 
 
 app = dash.Dash()
 
 df = pd.read_csv("guardbandcore-6.csv")
 
-y_columns = df["CPU0 CORES CORE1 Voltage"]
-x_rows = df["Time Stamp"]
+# Specify the columns you want to plot and their corresponding colors
+columns_to_plot = ["CPU0 CORES CORE1 Voltage"]
+colors = ["rgb(255, 0, 255)", "rgb(200, 51, 53)"]
 
-trace = go.Scatter(x=x_rows,y=y_columns, mode="lines",name="lines")
+graph_list = plotgraph(columns_to_plot, colors, df)
 
-data = [trace]
-
-layout = go.Layout(title = "Line Chart")
-
-fig = go.Figure(data=data, layout=layout)
-fig.write_html("plot.html")
-
-app.layout = html.Div([dcc.Graph(id="lineplot", figure = {"data" : data, "layout" : layout})])
+app.layout = html.Div(graph_list)
 
 if __name__ == "__main__":
     app.run_server()
+
+
